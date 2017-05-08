@@ -37,6 +37,8 @@ import static substratum.theme.template.ThemerConstants.ENFORCE_INTERNET_CHECK;
 import static substratum.theme.template.ThemerConstants.ENFORCE_MINIMUM_SUBSTRATUM_VERSION;
 import static substratum.theme.template.ThemerConstants.MINIMUM_SUBSTRATUM_VERSION;
 import static substratum.theme.template.ThemerConstants.PIRACY_CHECK;
+import static substratum.theme.template.ThemerConstants.SHOW_DIALOG_REPEATEDLY;
+import static substratum.theme.template.ThemerConstants.SHOW_LAUNCH_DIALOG;
 import static substratum.theme.template.ThemerConstants.SUBSTRATUM_FILTER_CHECK;
 import static substratum.theme.template.ThemerConstants.THEME_READY_GOOGLE_APPS;
 
@@ -178,7 +180,33 @@ public class SubstratumLauncher extends Activity {
                 ((mVerified) ? "certified" : "uncertified") + " by substratum!");
 
         SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-        if (ENFORCE_INTERNET_CHECK) {
+        if (SHOW_LAUNCH_DIALOG) {
+            if (SHOW_DIALOG_REPEATEDLY) {
+                showDialog();
+                sharedPref.edit().remove("dialog_showed").apply();
+            } else if (!sharedPref.getBoolean("dialog_showed", false)) {
+                showDialog();
+                sharedPref.edit().putBoolean("dialog_showed", true).apply();
+            } else {
+                if (ENFORCE_INTERNET_CHECK) {
+                    if (sharedPref.getInt("last_version", 0) == BuildConfig.VERSION_CODE) {
+                        if (THEME_READY_GOOGLE_APPS) {
+                            detectThemeReady();
+                        } else {
+                            launch();
+                        }
+                    } else {
+                        checkConnection();
+                    }
+                } else {
+                    if (THEME_READY_GOOGLE_APPS) {
+                        detectThemeReady();
+                    } else {
+                        launch();
+                    }
+                }
+            }
+        } else if (ENFORCE_INTERNET_CHECK) {
             if (sharedPref.getInt("last_version", 0) == BuildConfig.VERSION_CODE) {
                 if (THEME_READY_GOOGLE_APPS) {
                     detectThemeReady();
@@ -195,6 +223,48 @@ public class SubstratumLauncher extends Activity {
                 launch();
             }
         }
+    }
+
+    private void showDialog() {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this, R.style.DialogStyle)
+                .setCancelable(false)
+                .setIcon(R.mipmap.ic_launcher)
+                .setTitle(R.string.launch_dialog_title)
+                .setMessage(R.string.launch_dialog_content)
+                .setPositiveButton(R.string.launch_dialog_positive,
+                        new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+                        if (ENFORCE_INTERNET_CHECK) {
+                            if (sharedPref.getInt("last_version", 0) == BuildConfig.VERSION_CODE) {
+                                if (THEME_READY_GOOGLE_APPS) {
+                                    detectThemeReady();
+                                } else {
+                                    launch();
+                                }
+                            } else {
+                                checkConnection();
+                            }
+                        } else {
+                            if (THEME_READY_GOOGLE_APPS) {
+                                detectThemeReady();
+                            } else {
+                                launch();
+                            }
+                        }
+                    }
+                });
+
+        if (getString(R.string.launch_dialog_negative).length() > 0) {
+            dialog.setNegativeButton(R.string.launch_dialog_negative,
+                    new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                }
+            });
+        }
+        dialog.show();
     }
 
     private void launch() {

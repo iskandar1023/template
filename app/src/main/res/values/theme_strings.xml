@@ -8,4 +8,13 @@
         <item>Change Four</item>
         <item>Change Five</item>
     </string-array>
+
+    <!--
+      ~ Custom dialog message on theme launch.
+      ~ Add word in launch_dialog_negative to add a cancel button on the dialog
+      -->
+    <string name="launch_dialog_title">Dialog title</string>
+    <string name="launch_dialog_content">Dialog content</string>
+    <string name="launch_dialog_positive">OK</string>
+    <string name="launch_dialog_negative"></string>
 </resources>

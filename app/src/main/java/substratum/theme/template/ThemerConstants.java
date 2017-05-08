@@ -37,4 +37,9 @@ class ThemerConstants {
             "com.android.vending.billing.InAppBillingService.LUCK",
             "com.android.protips",
     };
+
+    // Custom message on theme launch, see theme_strings.xml for changing the dialog content
+    // Set SHOW_DIALOG_REPEATEDLY to true if you want the dialog to be showed on every theme launch
+    static final boolean SHOW_LAUNCH_DIALOG = false;
+    static final boolean SHOW_DIALOG_REPEATEDLY = false;
 }

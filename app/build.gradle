@@ -38,15 +38,15 @@ android {
 
         // Themers: Do not touch this, they will only formulate integrity structure of the core
         //          template
-        buildConfigField "String", "IV_KEY", "\"" + IV_KEY + "\""
-        buildConfigField "byte[]", "DECRYPTION_KEY", String.valueOf("\"" + KEY + "\"")
-                .replace("\"", "")
-                .replace("[", "{")
-                .replace("]", "}")
-        buildConfigField "byte[]", "IV_KEY", String.valueOf("\"" + IV_KEY + "\"")
-                .replace("\"", "")
-                .replace("[", "{")
-                .replace("]", "}")
+        // buildConfigField "String", "IV_KEY", "\"" + IV_KEY + "\""
+        // buildConfigField "byte[]", "DECRYPTION_KEY", String.valueOf("\"" + KEY + "\"")
+        //         .replace("\"", "")
+        //         .replace("[", "{")
+        //         .replace("]", "}")
+        // buildConfigField "byte[]", "IV_KEY", String.valueOf("\"" + IV_KEY + "\"")
+        //         .replace("\"", "")
+        //         .replace("[", "{")
+        //         .replace("]", "}")
         buildConfigField "boolean", "SUPPORTS_THIRD_PARTY_THEME_SYSTEMS", "" +
                 SUPPORTS_THIRD_PARTY_SYSTEMS
         resValue "bool", "SUPPORTS_THIRD_PARTY_THEME_SYSTEMS", "" + SUPPORTS_THIRD_PARTY_SYSTEMS
@@ -163,6 +163,8 @@ ext.CBool = {b ->
 
 task generatedInformationH {
 
+    def KEY_READY = String.valueOf("\"" + KEY + "\"").replace("\"", "").replace("[", "{").replace("]", "}")
+    def IV_KEY_READY = String.valueOf("\"" + IV_KEY + "\"").replace("\"", "").replace("[", "{").replace("]", "}")
     def file = new File(getProjectDir(), "src/main/jni/GeneratedInformation.h")
 
     def fileContent = """
@@ -176,6 +178,8 @@ task generatedInformationH {
 #define ENFORCE_AMAZON_APP_INSTALL ${CBool(ENFORCE_AMAZON_APP_INSTALL)}
 #define ENFORCE_BLACKLISTED_APKS_CHECK ${CBool(ENFORCE_BLACKLISTED_APKS_CHECK)}
 #define ALLOW_THIRD_PARTY_SUBSTRATUM_BUILD ${CBool(ALLOW_THIRD_PARTY_SUBSTRATUM_BUILD)}
+jbyte DECRYPTION_KEY[] = ${KEY_READY};
+jbyte IV_KEY[] = ${IV_KEY_READY};
 """
 
     if (file.exists()) {

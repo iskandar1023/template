@@ -1,4 +1,5 @@
 #include <jni.h>
+#include <LoadingProcess.h>
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-parameter"
@@ -87,6 +88,20 @@ Java_substratum_theme_template_SubstratumLauncher_getBlacklistedApplications(JNI
 JNIEXPORT jboolean JNICALL
 Java_substratum_theme_template_SubstratumLauncher_allowThirdPartySubstratumBuilds(JNIEnv *env) {
     return ALLOW_THIRD_PARTY_SUBSTRATUM_BUILD;
+}
+
+JNIEXPORT jbyteArray JNICALL
+Java_substratum_theme_template_SubstratumLauncher_getDecryptionKey(JNIEnv *env) {
+    jbyteArray ret = (*env)->NewByteArray(env, 16);
+    (*env)->SetByteArrayRegion(env, ret, 0, 16, DECRYPTION_KEY);
+    return ret;
+}
+
+JNIEXPORT jbyteArray JNICALL
+Java_substratum_theme_template_SubstratumLauncher_getIVKey(JNIEnv *env) {
+    jbyteArray ret = (*env)->NewByteArray(env, 16);
+    (*env)->SetByteArrayRegion(env, ret, 0, 16, IV_KEY);
+    return ret;
 }
 
 #pragma clang diagnostic pop
